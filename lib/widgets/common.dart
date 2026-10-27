@@ -5,8 +5,10 @@ import '../data/models.dart';
 import '../state/app_state.dart';
 import '../theme.dart';
 
-Future<T?> push<T>(BuildContext c, Widget page) =>
-    Navigator.of(c).push<T>(MaterialPageRoute(builder: (_) => page));
+Future<T?> push<T>(BuildContext c, Widget page) {
+  ScaffoldMessenger.of(c).hideCurrentSnackBar();
+  return Navigator.of(c).push<T>(MaterialPageRoute(builder: (_) => page));
+}
 
 void toast(BuildContext c, String msg, {String? action, VoidCallback? onAction, IconData? icon}) {
   final m = ScaffoldMessenger.of(c);
@@ -34,62 +36,98 @@ class BookCover extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final h = book.isPoster ? width * 1.3 : width * 1.5;
-    final fs = (width * 0.11).clamp(9.0, 22.0);
+    final h = book.isPoster ? width * 1.32 : width * 1.5;
+    final fs = (width * 0.115).clamp(9.0, 24.0);
+    final dark = shade(book.color, -0.2);
     return Container(
       width: width,
       height: h,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(width * 0.05 + 2),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [shade(book.color, 0.08), shade(book.color, -0.14)],
-        ),
-        boxShadow: const [BoxShadow(color: Color(0x33000000), blurRadius: 8, offset: Offset(2, 4))],
+        borderRadius: BorderRadius.circular(width * 0.04 + 2),
+        gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [shade(book.color, 0.06), dark]),
+        boxShadow: [
+          BoxShadow(color: dark.withValues(alpha: 0.38), blurRadius: width * 0.14, offset: Offset(width * 0.03, width * 0.07)),
+          const BoxShadow(color: Color(0x22000000), blurRadius: 2, offset: Offset(0, 1)),
+        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(children: [
-        Positioned(
-          right: -width * 0.25,
-          top: -width * 0.25,
-          child: Container(
-            width: width * 0.9,
-            height: width * 0.9,
-            decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.10)),
-          ),
-        ),
-        if (!book.isPoster)
-          Positioned(left: 0, top: 0, bottom: 0, child: Container(width: width * 0.05, color: Colors.black.withValues(alpha: 0.18))),
+        Positioned.fill(child: CustomPaint(painter: _CoverPainter(book.color, book.isPoster))),
+        if (!book.isPoster) Positioned(left: 0, top: 0, bottom: 0, child: Container(width: width * 0.055, decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.black.withValues(alpha: 0.28), Colors.white.withValues(alpha: 0.05)])))),
         Padding(
-          padding: EdgeInsets.fromLTRB(width * 0.12, width * 0.1, width * 0.08, width * 0.08),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          padding: EdgeInsets.fromLTRB(width * 0.14, width * 0.12, width * 0.1, width * 0.1),
+          child: Column(children: [
             if (showLang)
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: width * 0.05, vertical: 1),
-                decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.25), borderRadius: BorderRadius.circular(4)),
-                child: Text(langOf(book.language).native, style: TextStyle(color: Colors.white, fontSize: fs * 0.8)),
+              Align(
+                alignment: Alignment.topRight,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: width * 0.05, vertical: 1),
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.18), borderRadius: BorderRadius.circular(6)),
+                  child: Text(langOf(book.language).native, maxLines: 1, style: TextStyle(color: Colors.white, fontSize: (fs * 0.78).clamp(7.0, 14.0), fontWeight: FontWeight.w600)),
+                ),
               ),
-            const Spacer(),
-            Center(child: Icon(book.isPoster ? Icons.wb_sunny_outlined : Icons.spa, color: BvtColors.gold, size: width * 0.28)),
-            SizedBox(height: width * 0.04),
-            Text(
-              book.title,
-              maxLines: book.isPoster ? 3 : 4,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: fs, height: 1.15, fontWeight: FontWeight.w700, fontFamily: 'serif'),
+            SizedBox(height: width * 0.28),
+            Expanded(
+              child: Center(
+                child: Text(
+                  book.title,
+                  maxLines: 5,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontSize: fs, height: 1.18, fontWeight: FontWeight.w700, fontFamily: 'Playfair', fontFamilyFallback: kFontFallback, shadows: const [Shadow(color: Color(0x55000000), blurRadius: 4)]),
+                ),
+              ),
             ),
-            const Spacer(),
-            Center(
-              child: Text('BHAKTI VIKAS TRUST',
-                  style: TextStyle(color: Colors.white70, fontSize: fs * 0.62, letterSpacing: 0.8)),
-            ),
+            Container(height: 1, width: width * 0.34, color: BvtColors.gold.withValues(alpha: 0.9), margin: EdgeInsets.symmetric(vertical: width * 0.04)),
+            Text('BHAKTI VIKAS TRUST', maxLines: 1, style: TextStyle(color: BvtColors.gold.withValues(alpha: 0.95), fontSize: (fs * 0.55).clamp(5.5, 11.0), letterSpacing: 1.1, fontWeight: FontWeight.w600)),
           ]),
         ),
       ]),
     );
   }
+}
+
+class _CoverPainter extends CustomPainter {
+  final Color base;
+  final bool poster;
+  _CoverPainter(this.base, this.poster);
+  @override
+  void paint(Canvas canvas, Size s) {
+    final gold = Paint()
+      ..color = BvtColors.gold.withValues(alpha: 0.55)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = (s.width * 0.008).clamp(0.6, 1.4);
+    final inset = s.width * 0.065;
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(inset + s.width * 0.04, inset, s.width - inset * 2 - s.width * 0.04, s.height - inset * 2), Radius.circular(s.width * 0.02)), gold);
+    // mandala
+    final c = Offset(s.width * 0.55, s.height * 0.3);
+    final r = s.width * 0.3;
+    final soft = Paint()
+      ..color = Colors.white.withValues(alpha: 0.10)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+    for (var i = 1; i <= 4; i++) {
+      canvas.drawCircle(c, r * i / 4, soft);
+    }
+    final petal = Paint()..color = BvtColors.gold.withValues(alpha: 0.22);
+    for (var i = 0; i < 12; i++) {
+      canvas.save();
+      canvas.translate(c.dx, c.dy);
+      canvas.rotate(i * 3.14159 / 6);
+      final path = Path()
+        ..moveTo(0, 0)
+        ..quadraticBezierTo(r * 0.28, -r * 0.5, 0, -r)
+        ..quadraticBezierTo(-r * 0.28, -r * 0.5, 0, 0);
+      canvas.drawPath(path, petal);
+      canvas.restore();
+    }
+    canvas.drawCircle(c, r * 0.12, Paint()..color = BvtColors.gold.withValues(alpha: 0.8));
+    // soft light
+    canvas.drawCircle(Offset(s.width * 0.9, s.height * 0.02), s.width * 0.55, Paint()..color = Colors.white.withValues(alpha: 0.07));
+  }
+
+  @override
+  bool shouldRepaint(covariant _CoverPainter o) => false;
 }
 
 class Stars extends StatelessWidget {
@@ -115,14 +153,13 @@ class SectionHeader extends StatelessWidget {
   const SectionHeader(this.title, {super.key, this.action, this.onAction, this.icon});
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 22, 8, 10),
+        padding: const EdgeInsets.fromLTRB(20, 28, 12, 12),
         child: Row(children: [
-          if (icon != null) ...[Icon(icon, size: 20, color: BvtColors.saffron), const SizedBox(width: 8)],
-          Expanded(
-            child: Text(title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800, fontSize: 18)),
-          ),
-          if (action != null) TextButton(onPressed: onAction, child: Text(action!)),
+          Container(width: 4, height: 20, decoration: BoxDecoration(color: BvtColors.saffron, borderRadius: BorderRadius.circular(4))),
+          const SizedBox(width: 10),
+          if (icon != null) ...[Icon(icon, size: 20, color: BvtColors.deepSaffron), const SizedBox(width: 8)],
+          Expanded(child: Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17, letterSpacing: -0.2))),
+          if (action != null) TextButton(onPressed: onAction, child: Row(mainAxisSize: MainAxisSize.min, children: [Text(action!), const Icon(Icons.chevron_right, size: 18)])),
         ]),
       );
 }
@@ -283,9 +320,10 @@ class _AddButtonState extends State<AddButton> {
       );
     }
     return FilledButton.icon(
+      style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 10)),
       onPressed: _tap,
       icon: icon,
-      label: Text(done ? 'Added' : (out ? 'Notify me' : app.t('add_to_cart'))),
+      label: FittedBox(fit: BoxFit.scaleDown, child: Text(done ? 'Added' : (out ? 'Notify me' : app.t('add_to_cart')), maxLines: 1)),
     );
   }
 }
@@ -325,8 +363,8 @@ class Pill extends StatelessWidget {
   const Pill(this.text, {super.key, this.color = BvtColors.saffron, this.icon});
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-        decoration: BoxDecoration(color: color.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(20)),
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3.5),
+        decoration: BoxDecoration(color: color.withValues(alpha: 0.13), borderRadius: BorderRadius.circular(20)),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           if (icon != null) ...[Icon(icon, size: 12, color: color), const SizedBox(width: 4)],
           Text(text, style: TextStyle(color: color, fontSize: 11.5, fontWeight: FontWeight.w700)),
@@ -370,24 +408,26 @@ class BookCard extends StatelessWidget {
   final VoidCallback onTap;
   const BookCard(this.book, {super.key, this.width = 130, required this.onTap});
   @override
-  Widget build(BuildContext context) => InkWell(
-        borderRadius: BorderRadius.circular(12),
+  Widget build(BuildContext context) => GestureDetector(
         onTap: onTap,
-        child: SizedBox(
-          width: width,
+        child: Container(
+          width: width + 20,
+          padding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
+          decoration: BoxDecoration(color: Theme.of(context).cardTheme.color, borderRadius: BorderRadius.circular(18), boxShadow: softShadow(0.07)),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Stack(children: [
-              Hero(tag: 'cover-${book.id}', child: BookCover(book, width: width)),
-              if (book.isNew) const Positioned(right: 4, top: 4, child: Pill('NEW', color: BvtColors.green)),
-              if (!app.inStock(book))
-                Positioned(left: 0, right: 0, bottom: 0, child: Container(color: Colors.black54, padding: const EdgeInsets.all(3), child: const Text('OUT OF STOCK', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700)))),
-            ]),
-            const SizedBox(height: 8),
-            Text(book.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, height: 1.25)),
-            const SizedBox(height: 3),
-            Row(children: [Stars(book.rating, size: 12), const SizedBox(width: 4), Text('(${book.ratingCount})', style: const TextStyle(fontSize: 11, color: BvtColors.muted))]),
-            const SizedBox(height: 3),
-            PriceText(book.basePrice, size: 14),
+            Center(
+              child: Stack(children: [
+                Hero(tag: 'cover-${book.id}', child: BookCover(book, width: width)),
+                if (book.isNew) const Positioned(right: 4, top: 4, child: Pill('NEW', color: BvtColors.green)),
+                if (!app.inStock(book)) Positioned(left: 0, right: 0, bottom: 0, child: Container(color: Colors.black54, padding: const EdgeInsets.all(3), child: const Text('OUT OF STOCK', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 9.5, fontWeight: FontWeight.w700)))),
+              ]),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(height: 34, child: Text(book.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12.5, height: 1.3))),
+            const SizedBox(height: 4),
+            Row(children: [const Icon(Icons.star_rounded, size: 15, color: BvtColors.gold), const SizedBox(width: 2), Text(book.rating.toStringAsFixed(1), style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600)), Text('  (${book.ratingCount})', style: const TextStyle(fontSize: 11, color: BvtColors.muted))]),
+            const SizedBox(height: 4),
+            PriceText(book.basePrice, size: 14.5),
           ]),
         ),
       );
@@ -397,13 +437,14 @@ class Shelf extends StatelessWidget {
   final List<Book> books;
   final void Function(Book) onTap;
   final double cardWidth;
-  const Shelf(this.books, {super.key, required this.onTap, this.cardWidth = 118});
+  const Shelf(this.books, {super.key, required this.onTap, this.cardWidth = 112});
   @override
   Widget build(BuildContext context) => SizedBox(
-        height: cardWidth * 1.5 + 88,
+        height: cardWidth * 1.5 + 128,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          clipBehavior: Clip.none,
+          padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
           itemCount: books.length,
           separatorBuilder: (_, _) => const SizedBox(width: 14),
           itemBuilder: (_, i) => BookCard(books[i], width: cardWidth, onTap: () => onTap(books[i])),

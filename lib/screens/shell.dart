@@ -23,15 +23,17 @@ class AppShell extends StatelessWidget {
           body: Stack(children: [
             IndexedStack(index: i, children: const [HomeTab(), BrowseTab(), LibraryTab(), CartTab(), AccountTab()]),
             if (!app.cookieConsentShown)
-              Positioned(left: 12, right: 12, bottom: 8, child: _CookieBanner()),
+              Positioned(left: 14, right: 14, bottom: 10, child: _CookieBanner()),
           ]),
-          floatingActionButton: (i == 0 || i == 1)
-              ? FloatingActionButton.extended(
+          floatingActionButton: ((i == 0 || i == 1) && app.cookieConsentShown)
+              ? FloatingActionButton(
                   backgroundColor: BvtColors.whatsapp,
                   foregroundColor: Colors.white,
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                  tooltip: 'Chat support',
                   onPressed: () => push(context, const ChatbotScreen()),
-                  icon: const Icon(Icons.chat),
-                  label: const Text('Chat'),
+                  child: const Icon(Icons.chat_rounded),
                 )
               : null,
           bottomNavigationBar: NavigationBar(
@@ -62,24 +64,23 @@ class AppShell extends StatelessWidget {
 class _CookieBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
-        elevation: 8,
-        borderRadius: BorderRadius.circular(14),
-        color: BvtColors.maroon,
+        elevation: 10,
+        shadowColor: Colors.black38,
+        borderRadius: BorderRadius.circular(18),
+        color: BvtColors.ink,
         child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('We value your privacy', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800)),
-            const SizedBox(height: 4),
-            const Text('We use cookies for essential features, analytics (GA4) and Meta Pixel. GDPR-compliant consent for EU visitors.', style: TextStyle(color: Colors.white70, fontSize: 12.5)),
-            const SizedBox(height: 8),
-            Row(children: [
-              Expanded(child: Align(alignment: Alignment.centerLeft, child: TextButton(onPressed: () => app.update(() => app.cookieConsentShown = true), child: const Text('Essential only', style: TextStyle(color: Colors.white70))))),
-              FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: BvtColors.gold, foregroundColor: Colors.black, minimumSize: const Size(90, 38)),
-                onPressed: () => app.update(() => app.cookieConsentShown = true),
-                child: const Text('Accept all'),
-              ),
-            ]),
+          padding: const EdgeInsets.fromLTRB(16, 10, 10, 10),
+          child: Row(children: [
+            const Icon(Icons.cookie_outlined, color: BvtColors.gold, size: 22),
+            const SizedBox(width: 10),
+            const Expanded(child: Text('We use cookies for analytics (GA4, Meta Pixel). GDPR-compliant consent.', style: TextStyle(color: Colors.white70, fontSize: 11.5, height: 1.35))),
+            const SizedBox(width: 6),
+            TextButton(onPressed: () => app.update(() => app.cookieConsentShown = true), child: const Text('Essential', style: TextStyle(color: Colors.white60, fontSize: 12))),
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: BvtColors.gold, foregroundColor: Colors.black, minimumSize: const Size(64, 36), padding: const EdgeInsets.symmetric(horizontal: 14)),
+              onPressed: () => app.update(() => app.cookieConsentShown = true),
+              child: const Text('Accept', style: TextStyle(fontSize: 12.5)),
+            ),
           ]),
         ),
       );

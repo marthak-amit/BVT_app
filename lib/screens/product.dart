@@ -60,7 +60,9 @@ class _ProductScreenState extends State<ProductScreen> {
         final sibs = siblings(book);
         final access = app.hasAccess(book);
         return Scaffold(
+          extendBodyBehindAppBar: true,
           appBar: AppBar(
+            backgroundColor: Colors.transparent,
             actions: [
               IconButton(icon: Icon(app.wishlist.contains(book.id) ? Icons.favorite : Icons.favorite_border, color: BvtColors.red), onPressed: () {
                 app.toggleWish(book.id);
@@ -76,7 +78,7 @@ class _ProductScreenState extends State<ProductScreen> {
           bottomNavigationBar: SafeArea(
             child: Container(
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-              decoration: const BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Color(0xFFEBD9BC)))),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: const BorderRadius.vertical(top: Radius.circular(24)), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, -4))]),
               child: Row(children: [
                 Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
                   PriceText(bulk > 0 ? (price * (1 - bulk)).round() : price, mrp: bulk > 0 ? price : null, size: 20),
@@ -87,9 +89,10 @@ class _ProductScreenState extends State<ProductScreen> {
                   child: access
                       ? FilledButton.icon(onPressed: () => push(context, ReaderScreen(book)), icon: const Icon(Icons.auto_stories), label: Text(app.t('continue_reading')))
                       : Row(children: [
-                          Expanded(child: AddButton(book, format, qty: qty)),
+                          Expanded(flex: 6, child: AddButton(book, format, qty: qty)),
                           const SizedBox(width: 8),
                           Expanded(
+                            flex: 4,
                             child: OutlinedButton(
                               onPressed: !app.inStock(book) ? null : () {
                                 app.addToCart(book, format, qty: qty);
@@ -103,7 +106,7 @@ class _ProductScreenState extends State<ProductScreen> {
               ]),
             ),
           ),
-          body: ListView(padding: const EdgeInsets.only(bottom: 24), children: [
+          body: ListView(padding: EdgeInsets.zero, children: [
             _Gallery(book: book, index: gallery, onChanged: (i) => setState(() => gallery = i)),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -115,7 +118,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   if (app.pinned.contains(book.id)) const Pill('Sponsored', color: BvtColors.gold),
                 ]),
                 const SizedBox(height: 10),
-                Text(book.title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900, height: 1.2)),
+                Text(book.title, style: const TextStyle(fontWeight: FontWeight.w700, height: 1.2, fontSize: 25, fontFamily: 'Playfair', fontFamilyFallback: kFontFallback)),
                 const SizedBox(height: 4),
                 Text('by ${book.author}', style: const TextStyle(color: BvtColors.muted)),
                 const SizedBox(height: 8),
@@ -339,9 +342,10 @@ class _Gallery extends StatelessWidget {
     const n = 3;
     return Column(children: [
       Container(
-        height: 330,
+        height: 330 + MediaQuery.of(context).padding.top + 40,
         width: double.infinity,
-        decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [BvtColors.sand, BvtColors.cream])),
+        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 40),
+        decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [shade(book.color, 0.42), BvtColors.cream])),
         child: PageView.builder(
           itemCount: n,
           onPageChanged: onChanged,

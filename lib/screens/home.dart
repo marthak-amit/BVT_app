@@ -30,54 +30,19 @@ class HomeTab extends StatelessWidget {
     return ListenableBuilder(
       listenable: app,
       builder: (context, _) => Scaffold(
-        appBar: AppBar(
-          titleSpacing: 16,
-          title: const Row(children: [
-            Icon(Icons.spa, color: BvtColors.saffron),
-            SizedBox(width: 8),
-            Text('BVT Books'),
-          ]),
-          actions: [
-            IconButton(
-              tooltip: 'Notifications',
-              icon: Badge(isLabelVisible: app.unreadCount > 0, label: Text('${app.unreadCount}'), child: const Icon(Icons.notifications_none)),
-              onPressed: () => push(context, const NotificationsScreen()),
-            ),
-            IconButton(
-              tooltip: 'Wishlist',
-              icon: Badge(isLabelVisible: app.wishlist.isNotEmpty, label: Text('${app.wishlist.length}'), child: const Icon(Icons.favorite_border)),
-              onPressed: () => push(context, const WishlistScreen()),
-            ),
-          ],
-        ),
         body: LoadGate(
           skeleton: const _HomeSkeleton(),
           child: RefreshIndicator(
             onRefresh: () async => await Future.delayed(const Duration(milliseconds: 600)),
-            child: ListView(padding: const EdgeInsets.only(bottom: 90), children: [
+            child: ListView(padding: const EdgeInsets.only(bottom: 100), children: [
               if (app.offlineMode)
                 Container(
                   color: const Color(0xFFFFE0B2),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: const Row(children: [Icon(Icons.cloud_off, size: 18), SizedBox(width: 8), Expanded(child: Text('Offline mode — showing your last 50 viewed products and downloaded chapters.', style: TextStyle(fontSize: 12.5)))]),
                 ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-                child: GestureDetector(
-                  onTap: () => push(context, const SearchScreen()),
-                  child: Container(
-                    height: 48,
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14), border: Border.all(color: const Color(0xFFE2CFAE))),
-                    child: Row(children: [
-                      const Icon(Icons.search, color: BvtColors.muted),
-                      const SizedBox(width: 10),
-                      Expanded(child: Text(app.t('search_hint'), style: const TextStyle(color: BvtColors.muted))),
-                      const Icon(Icons.mic_none, color: BvtColors.muted),
-                    ]),
-                  ),
-                ),
-              ),
+              const _Header(),
+              const SizedBox(height: 40),
               const HeroCarousel(),
               const _QuickActions(),
               if (app.loggedIn && app.library.isNotEmpty) const _ContinueReading(),
@@ -105,6 +70,64 @@ class HomeTab extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _Header extends StatelessWidget {
+  const _Header();
+  @override
+  Widget build(BuildContext context) {
+    final top = MediaQuery.of(context).padding.top;
+    Widget circle(IconData i, VoidCallback onTap, {int badge = 0}) => GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.18), shape: BoxShape.circle),
+            child: Badge(isLabelVisible: badge > 0, label: Text('$badge'), child: Icon(i, color: Colors.white, size: 22)),
+          ),
+        );
+    return Stack(clipBehavior: Clip.none, children: [
+      Container(
+        padding: EdgeInsets.fromLTRB(20, top + 16, 20, 56),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF8A3510), BvtColors.deepSaffron, BvtColors.saffron]),
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+        ),
+        child: Row(children: [
+          Container(width: 46, height: 46, decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: softShadow(0.2)), child: const Icon(Icons.spa, color: BvtColors.deepSaffron, size: 26)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(app.loggedIn ? '${app.t('welcome')} ${app.name.split(' ').first}' : app.t('welcome'), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700, fontFamily: 'Playfair', fontFamilyFallback: kFontFallback)),
+              const Text('Find your next read', style: TextStyle(color: Colors.white70, fontSize: 12.5)),
+            ]),
+          ),
+          circle(Icons.notifications_none_rounded, () => push(context, const NotificationsScreen()), badge: app.unreadCount),
+          const SizedBox(width: 8),
+          circle(Icons.favorite_border_rounded, () => push(context, const WishlistScreen()), badge: app.wishlist.length),
+        ]),
+      ),
+      Positioned(
+        left: 20,
+        right: 20,
+        bottom: -26,
+        child: GestureDetector(
+          onTap: () => push(context, const SearchScreen()),
+          child: Container(
+            height: 54,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(color: Theme.of(context).cardTheme.color, borderRadius: BorderRadius.circular(18), boxShadow: softShadow(0.18)),
+            child: Row(children: [
+              const Icon(Icons.search_rounded, color: BvtColors.deepSaffron),
+              const SizedBox(width: 10),
+              Expanded(child: Text(app.t('search_hint'), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: BvtColors.muted, fontSize: 14))),
+              Container(width: 34, height: 34, decoration: BoxDecoration(color: BvtColors.sand, borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.mic_none_rounded, size: 20, color: BvtColors.deepSaffron)),
+            ]),
+          ),
+        ),
+      ),
+    ]);
   }
 }
 
@@ -169,7 +192,7 @@ class _HeroCarouselState extends State<HeroCarousel> {
     final items = _items;
     return Column(children: [
       SizedBox(
-        height: 176,
+        height: 190,
         child: PageView.builder(
           controller: _pc,
           itemCount: items.length,
@@ -179,28 +202,30 @@ class _HeroCarouselState extends State<HeroCarousel> {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: InkWell(
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(24),
                 onTap: () => handleTarget(context, b.target),
                 child: Ink(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
-                    gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [b.color, shade(b.color, -0.15)]),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: softShadow(0.2),
+                    gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [shade(b.color, 0.05), shade(b.color, -0.14)]),
                   ),
                   child: Stack(children: [
-                    Positioned(right: -30, bottom: -30, child: Icon(Icons.spa, size: 170, color: Colors.white.withValues(alpha: 0.1))),
+                    Positioned(right: -36, bottom: -36, child: Icon(Icons.spa, size: 190, color: Colors.white.withValues(alpha: 0.12))),
+                    Positioned(right: 18, top: 18, child: Container(width: 54, height: 54, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: BvtColors.gold.withValues(alpha: 0.6), width: 1.5)), child: const Icon(Icons.auto_stories, color: BvtColors.gold, size: 26))),
                     Padding(
-                      padding: const EdgeInsets.all(18),
+                      padding: const EdgeInsets.fromLTRB(22, 18, 22, 18),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         if (b.appExclusive) const Pill('APP EXCLUSIVE', color: BvtColors.gold),
                         const Spacer(),
-                        Text(b.title, maxLines: 2, style: const TextStyle(color: Colors.white, fontSize: 21, fontWeight: FontWeight.w900, height: 1.15)),
+                        Text(b.title, maxLines: 2, style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700, height: 1.2, fontFamily: 'Playfair', fontFamilyFallback: kFontFallback)),
                         const SizedBox(height: 4),
                         Text(b.subtitle, maxLines: 2, style: const TextStyle(color: Colors.white70, fontSize: 13)),
                         const SizedBox(height: 10),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
-                          child: Text(b.cta, style: TextStyle(color: b.color, fontWeight: FontWeight.w800, fontSize: 13)),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(22)),
+                          child: Row(mainAxisSize: MainAxisSize.min, children: [Text(b.cta, style: TextStyle(color: b.color, fontWeight: FontWeight.w700, fontSize: 13)), const SizedBox(width: 4), Icon(Icons.arrow_forward_rounded, size: 15, color: b.color)]),
                         ),
                       ]),
                     ),
@@ -230,32 +255,32 @@ class _QuickActions extends StatelessWidget {
   const _QuickActions();
   @override
   Widget build(BuildContext context) {
-    final items = <(IconData, String, Widget)>[
-      (Icons.workspace_premium, 'Plans', const PlansScreen()),
-      (Icons.tablet_mac, app.t('ebooks'), const EbooksScreen()),
-      (Icons.image_outlined, app.t('posters'), const PostersScreen()),
-      (Icons.volunteer_activism, app.t('donate'), const DonateScreen()),
-      (Icons.inventory_2_outlined, app.t('bulk_order'), const BulkOrderScreen()),
-      (Icons.article_outlined, app.t('blog'), const BlogScreen()),
+    final items = <(IconData, String, Widget, Color)>[
+      (Icons.workspace_premium_rounded, 'Plans', const PlansScreen(), const Color(0xFFC4600F)),
+      (Icons.tablet_mac_rounded, app.t('ebooks'), const EbooksScreen(), const Color(0xFF3B6EA5)),
+      (Icons.image_rounded, app.t('posters'), const PostersScreen(), const Color(0xFF7B3FA0)),
+      (Icons.volunteer_activism_rounded, app.t('donate'), const DonateScreen(), const Color(0xFFC62828)),
+      (Icons.inventory_2_rounded, app.t('bulk_order'), const BulkOrderScreen(), const Color(0xFF2E7D4F)),
+      (Icons.article_rounded, app.t('blog'), const BlogScreen(), const Color(0xFF8D6E63)),
     ];
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 14, 8, 0),
+      padding: const EdgeInsets.fromLTRB(10, 22, 10, 0),
       child: Row(children: [
         for (final it in items)
           Expanded(
             child: InkWell(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
               onTap: () => push(context, it.$3),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
+                padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Column(children: [
                   Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(color: BvtColors.sand, borderRadius: BorderRadius.circular(14)),
-                    child: Icon(it.$1, color: BvtColors.deepSaffron),
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(color: Theme.of(context).cardTheme.color, borderRadius: BorderRadius.circular(18), boxShadow: softShadow(0.08)),
+                    child: Icon(it.$1, color: it.$4, size: 26),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 7),
                   Text(it.$2, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
                 ]),
               ),
@@ -305,22 +330,28 @@ class _SubscribeCta extends StatelessWidget {
   const _SubscribeCta();
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
+        padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+        child: GestureDetector(
           onTap: () => push(context, const PlansScreen()),
-          child: Ink(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(color: BvtColors.sand, borderRadius: BorderRadius.circular(16), border: Border.all(color: BvtColors.gold.withValues(alpha: 0.5))),
+          child: Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFFFFF1D6), Color(0xFFFBDDA8)]),
+              border: Border.all(color: BvtColors.gold.withValues(alpha: 0.5)),
+              boxShadow: softShadow(0.06),
+            ),
             child: Row(children: [
-              const Icon(Icons.auto_stories, size: 40, color: BvtColors.deepSaffron),
+              Container(width: 56, height: 56, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18)), child: const Icon(Icons.auto_stories_rounded, size: 30, color: BvtColors.deepSaffron)),
               const SizedBox(width: 14),
-              const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('Read unlimited with a subscription', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: BvtColors.maroon)),
-                SizedBox(height: 2),
-                Text('Per-book from ₹49 · Language All-Access ₹149/mo · 7-day free trial', style: TextStyle(fontSize: 12.5, color: BvtColors.muted)),
-              ])),
-              const Icon(Icons.chevron_right),
+              const Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('Read unlimited', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16.5, color: BvtColors.maroon)),
+                  SizedBox(height: 2),
+                  Text('Per-book from ₹49 · All-access ₹149/mo\n7-day free trial', style: TextStyle(fontSize: 12, color: BvtColors.muted, height: 1.4)),
+                ]),
+              ),
+              Container(width: 38, height: 38, decoration: const BoxDecoration(color: BvtColors.deepSaffron, shape: BoxShape.circle), child: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20)),
             ]),
           ),
         ),
@@ -330,20 +361,28 @@ class _SubscribeCta extends StatelessWidget {
 class _LanguageGrid extends StatelessWidget {
   const _LanguageGrid();
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Wrap(spacing: 8, runSpacing: 8, children: [
+  Widget build(BuildContext context) => GridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 4,
+        childAspectRatio: 1.18,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        children: [
           for (final l in languages)
-            ActionChip(
-              avatar: CircleAvatar(
-                backgroundColor: BvtColors.saffron.withValues(alpha: 0.18),
-                radius: 11,
-                child: Text('${allBooks.where((b) => b.language == l.code).length}', style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: BvtColors.maroon)),
+            GestureDetector(
+              onTap: () => push(context, ListingScreen(title: '${l.name} books', language: l.code)),
+              child: Container(
+                decoration: BoxDecoration(color: Theme.of(context).cardTheme.color, borderRadius: BorderRadius.circular(16), boxShadow: softShadow(0.06), border: Border.all(color: BvtColors.line)),
+                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Text(l.native, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: BvtColors.maroon)),
+                  const SizedBox(height: 2),
+                  Text('${allBooks.where((b) => b.language == l.code).length} books', style: const TextStyle(fontSize: 10.5, color: BvtColors.muted)),
+                ]),
               ),
-              label: Text('${l.native} · ${l.name}'),
-              onPressed: () => push(context, ListingScreen(title: '${l.name} books', language: l.code)),
             ),
-        ]),
+        ],
       );
 }
 

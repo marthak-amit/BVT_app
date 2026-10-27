@@ -63,7 +63,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                 behavior: HitTestBehavior.opaque,
                 onTap: () => setState(() => chrome = !chrome),
                 child: ListView(padding: EdgeInsets.fromLTRB(24, MediaQuery.of(context).padding.top + 70, 24, 120), children: [
-                  Text(ch.title, style: TextStyle(fontSize: fontSize + 8, fontWeight: FontWeight.w800, color: BvtColors.deepSaffron, fontFamily: serif ? 'serif' : null)),
+                  Text(ch.title, style: TextStyle(fontSize: fontSize + 8, fontWeight: FontWeight.w800, color: BvtColors.deepSaffron, fontFamily: serif ? 'Playfair' : null)),
                   const SizedBox(height: 18),
                   for (var pi = 0; pi < ch.paragraphs.length; pi++) _para(b, ci, pi, ch.paragraphs[pi]),
                   const SizedBox(height: 30),
@@ -143,7 +143,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
         margin: const EdgeInsets.only(bottom: 16),
         padding: hl ? const EdgeInsets.all(6) : EdgeInsets.zero,
         decoration: hl ? BoxDecoration(color: BvtColors.saffron.withValues(alpha: 0.28), borderRadius: BorderRadius.circular(6)) : null,
-        child: Text(text, style: TextStyle(fontSize: fontSize, height: 1.65, color: fg, fontFamily: serif ? 'serif' : null)),
+        child: Text(text, style: TextStyle(fontSize: fontSize, height: 1.65, color: fg, fontFamily: serif ? 'Playfair' : null)),
       ),
     );
   }
@@ -285,7 +285,7 @@ class _SampleReaderScreenState extends State<SampleReaderScreen> {
                         const Spacer(),
                         Center(child: BookCover(b, width: 140)),
                         const SizedBox(height: 16),
-                        Center(child: Text(b.title, textAlign: TextAlign.center, style: const TextStyle(fontFamily: 'serif', fontSize: 18, fontWeight: FontWeight.w800))),
+                        Center(child: Text(b.title, textAlign: TextAlign.center, style: const TextStyle(fontFamily: 'Playfair', fontSize: 18, fontWeight: FontWeight.w800))),
                         const Spacer(),
                       ] else ...[
                         Text(i == 1 ? 'Copyright & Dedication' : i == 2 ? 'Contents' : 'Preface', style: const TextStyle(color: BvtColors.deepSaffron, fontWeight: FontWeight.w800, fontSize: 16)),
