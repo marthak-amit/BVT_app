@@ -12,7 +12,7 @@ void main() {
     expect(searchBooks('ramyana').isNotEmpty, true);
     expect(searchBooks('कृष्ण').isNotEmpty, true);
     expect(searchBooks('zzzzqq').isEmpty, true);
-    expect(allBooks.length > 80, true);
+    expect(allBooks.length > 25, true);
   });
 
   testWidgets('onboarding → home → product → cart → checkout → order', (t) async {
@@ -25,7 +25,8 @@ void main() {
     await t.pump();
     await t.tap(find.text('Start exploring'));
     await t.pump(const Duration(seconds: 2));
-    expect(find.text('BVT Books'), findsWidgets);
+    await t.pump(const Duration(seconds: 2));
+    expect(find.text('Find your next read'), findsWidgets);
 
     app.login();
     final b = bookById('ramayana-en');

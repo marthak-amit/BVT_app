@@ -56,7 +56,7 @@ class BrowseTab extends StatelessWidget {
                 dense: true,
                 leading: CircleAvatar(radius: 16, backgroundColor: BvtColors.sand, child: Text(l.native.characters.first, style: const TextStyle(color: BvtColors.maroon, fontWeight: FontWeight.w800))),
                 title: Text('${l.name}  ·  ${l.native}'),
-                subtitle: Text('${l.script} script · ${allBooks.where((b) => b.language == l.code).length} titles'),
+                subtitle: Text('${l.script} script · ${allBooks.where((b) => b.language == l.code).length} ${allBooks.where((b) => b.language == l.code).length == 1 ? 'title' : 'titles'}'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => push(context, ListingScreen(title: '${l.name} books', language: l.code)),
               ),

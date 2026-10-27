@@ -322,8 +322,8 @@ class AppState extends ChangeNotifier {
       mk('BVT-100201', 34, [('sri-caitanya-mahaprabhu-en', BookFormat.paperback, 1), ('lekha-mala-en', BookFormat.paperback, 1)], 5, 'Net banking · Razorpay'),
     ]);
     notify('Order Dispatched', 'BVT-100482 is on its way via Delhivery. Track: bvks.in/t/482', 'WhatsApp');
-    notify('Back in stock', 'Śrī Caitanya Mahāprabhu (Hindi) is available again.', 'Push');
-    notify('App-exclusive early access', 'Pre-order the new Gītā for Youth edition before the public launch.', 'Push');
+    notify('Back in stock', 'Ramayana (Hindi) is available again.', 'Push');
+    notify('App-exclusive early access', 'Get early access to The Mood and Mission of Śrīla Prabhupāda.', 'Push');
   }
 
   List<OrderEvent> timeline(Order o) {
@@ -538,8 +538,8 @@ class AppState extends ChangeNotifier {
   // ---- admin-managed content (drives storefront) ----------------------------
   final List<PromoBanner> banners = [
     PromoBanner('Read anywhere with BVT Reader', 'Language All-Access from ₹149/mo · 7-day free trial', 'Explore plans', 'plans', const Color(0xFFB5541C)),
-    PromoBanner('Śrī Caitanya Mahāprabhu', 'Now in 16 languages — new hardcover edition', 'Shop now', 'book:sri-caitanya-mahaprabhu-en', const Color(0xFF7A2E0E)),
-    PromoBanner('Gītā for Youth — App early access', 'Pre-order in the app before the public launch', 'Get early access', 'book:gita-youth-en', const Color(0xFF3B6EA5), appExclusive: true),
+    PromoBanner('Śrī Caitanya Mahāprabhu', 'The life and teachings of Śrī Caitanya Mahāprabhu — English & Gujarati', 'Shop now', 'book:sri-caitanya-mahaprabhu-en', const Color(0xFF7A2E0E)),
+    PromoBanner('The Mood and Mission of Śrīla Prabhupāda — App early access', 'New release — get early access in the app', 'Get early access', 'book:mood-and-mission-en', const Color(0xFF3B6EA5), appExclusive: true),
     PromoBanner('Bulk orders made easy', 'Quantity pricing for temples, schools & book tables', 'Request a quote', 'bulk', const Color(0xFF2E7D32)),
   ];
   late final List<Article> blog = List.of(articles);

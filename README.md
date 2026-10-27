@@ -34,7 +34,7 @@ flutter test
 - Device features (simulated): biometric login, haptics, offline mode, text scaling, dark mode, home-screen widget preview, Siri Shortcuts, deep-link tester
 
 ## Notes
-- books.bvks.com was not reachable from the build environment, so titles, prices and categories are representative sample data.
+- books.bvks.com (and bvks.com) are blocked by the build environment's network policy, so the catalog could not be scraped. Titles, years, page counts, ISBNs, language availability and a few prices (Brahmacarya ₹95–139, On Pilgrimage ₹220, Bhaktisiddhānta Vaibhava ₹2199) come from real books.bvks.com pages seen via search results. All other prices, stock levels, ratings and reviews are placeholders — re-sync `lib/data/catalog.dart` once the host is allowed.
 - GST rates are demo values (books 0%, posters 12%, subscriptions 18%).
 - `extras/admin_console_prototype/` holds an unfinished web-only Admin Console prototype (RBAC, CMS, Zoho sync, etc.).
   It is outside `lib/` and not part of the mobile build.

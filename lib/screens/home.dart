@@ -50,7 +50,7 @@ class HomeTab extends StatelessWidget {
               SectionHeader(app.t('featured'), action: 'See all', onAction: () => push(context, const ListingScreen(title: 'Featured books', featuredOnly: true))),
               Shelf(allBooks.where((b) => b.featured && b.language == app.preferredBookLang).followedBy(allBooks.where((b) => b.featured && b.language != app.preferredBookLang)).take(10).toList(), onTap: (b) => openBook(context, b)),
               SectionHeader(app.t('new_arrivals'), action: 'See all', onAction: () => push(context, const ListingScreen(title: 'New arrivals', newOnly: true))),
-              Shelf(allBooks.where((b) => b.isNew).toList(), onTap: (b) => openBook(context, b)),
+              Shelf(allBooks.where((b) => b.isNew).toList().isEmpty ? allBooks.take(6).toList() : allBooks.where((b) => b.isNew).toList(), onTap: (b) => openBook(context, b)),
               SectionHeader(app.t('shop_by_language'), icon: Icons.translate),
               const _LanguageGrid(),
               if (app.recent.isNotEmpty) ...[
@@ -58,10 +58,11 @@ class HomeTab extends StatelessWidget {
                 Shelf(app.recent.map(bookById).take(12).toList(), onTap: (b) => openBook(context, b)),
               ],
               _Recommended(),
-              for (final cat in ["Acharya's Glorification", 'Vedic Culture', 'Youth']) ...[
-                SectionHeader(cat, action: 'See all', onAction: () => push(context, ListingScreen(title: cat, category: cat))),
-                Shelf(allBooks.where((b) => b.category == cat && b.language == app.preferredBookLang).toList(), onTap: (b) => openBook(context, b)),
-              ],
+              for (final cat in ["Acharya's Glorification", 'Youth', 'Pilgrimage'])
+                if (allBooks.any((b) => b.category == cat && b.language == app.preferredBookLang)) ...[
+                  SectionHeader(cat, action: 'See all', onAction: () => push(context, ListingScreen(title: cat, category: cat))),
+                  Shelf(allBooks.where((b) => b.category == cat && b.language == app.preferredBookLang).toList(), onTap: (b) => openBook(context, b)),
+                ],
               const _Testimonials(),
               const _WhatsAppCard(),
               const _Footer(),

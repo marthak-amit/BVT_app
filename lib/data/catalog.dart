@@ -31,7 +31,6 @@ const categories = <String>[
   'Epics & Itihasa',
   'Pilgrimage',
   'Women & Family',
-  'Festivals',
   'Posters',
 ];
 
@@ -44,115 +43,79 @@ const categoryIcons = <String, IconData>{
   'Epics & Itihasa': Icons.menu_book,
   'Pilgrimage': Icons.landscape_outlined,
   'Women & Family': Icons.diversity_1_outlined,
-  'Festivals': Icons.celebration_outlined,
   'Posters': Icons.image_outlined,
 };
 
 class _Work {
-  final String key, title, category, description;
-  String get author => 'HH Bhakti Vikasa Swami';
-  final int pages, price;
+  final String key, title, category, author, description;
+  final int pages, price, year;
   final String langs;
   final Map<String, String> local;
   final bool featured, isNew, hard;
   final Color color;
   final String aliases;
-  const _Work(this.key, this.title, this.category, this.price, this.pages, this.langs, this.color,
-      this.description,
-      {this.local = const {},
+  const _Work(this.key, this.title, this.category, this.price, this.pages, this.langs, this.color, this.description,
+      {this.author = 'HH Bhakti Vikasa Swami',
+      this.year = 0,
+      this.local = const {},
       this.featured = false,
       this.isNew = false,
       this.hard = false,
       this.aliases = ''});
 }
 
-const _lorem =
-    'A carefully edited edition from Bhakti Vikas Trust. Prototype description text: this title is part of the demo catalog used to showcase listing, filtering, previews and reading subscriptions.';
-
+// Titles, years, page counts and language availability follow the live
+// books.bvks.com catalogue. Prices marked (est.) could not be read from the
+// store from this environment and should be confirmed against the live site.
 const _works = <_Work>[
-  _Work('sri-caitanya-mahaprabhu', 'Śrī Caitanya Mahāprabhu', "Acharya's Glorification", 250, 420,
-      'en hi gu mr bn te ta kn ml or as pa ne ru es', Color(0xFFB5541C),
-      'The life and teachings of Śrī Caitanya Mahāprabhu, narrated with scriptural references and traditional commentary. $_lorem',
-      local: {
-        'hi': 'श्री चैतन्य महाप्रभु',
-        'mr': 'श्री चैतन्य महाप्रभू',
-        'gu': 'શ્રી ચૈતન્ય મહાપ્રભુ',
-        'bn': 'শ্রী চৈতন্য মহাপ্রভু'
-      },
+  _Work('ramayana', 'Ramayana: The Story of Lord Rama', 'Epics & Itihasa', 450, 600, 'en hi gu mr kn te ru', Color(0xFF1F6F6B),
+      'Hardcover, 2012. The Rāmāyaṇa retold by Bhakti Vikāsa Swami. Also available in Hindi, Gujarati, Marathi, Kannada, Telugu and Russian.',
+      year: 2012,
+      local: {'hi': 'रामायण', 'gu': 'રામાયણ', 'mr': 'रामायण', 'kn': 'ರಾಮಾಯಣ', 'te': 'రామాయణం'},
       featured: true,
       hard: true,
-      aliases: 'chaitanya gaurasundara gauranga'),
-  _Work('lekha-mala', 'Lekha-mālā: A Garland of Writings', 'Philosophy', 200, 310, 'en hi gu bn',
-      Color(0xFF8A3B12), 'A collection of essays and articles on devotion, practice and Vaiṣṇava culture. $_lorem',
-      local: {'hi': 'लेखमाला', 'gu': 'લેખમાળા', 'bn': 'লেখমালা'}, featured: true, aliases: 'lekhamala articles essays'),
-  _Work('mothers-masters', 'Mothers and Masters', 'Women & Family', 180, 240, 'en hi gu mr bn ru',
-      Color(0xFF9C4A5A), 'Reflections on the roles of women and men in Vedic culture, family life and spiritual growth. $_lorem',
-      local: {'hi': 'माताएँ और गुरुजन', 'gu': 'માતાઓ અને ગુરુજનો', 'mr': 'माता आणि गुरुजन'}),
-  _Work('ramayana', 'Rāmāyaṇa', 'Epics & Itihasa', 350, 520, 'en hi gu mr bn te ta kn ml or',
-      Color(0xFF1F6F6B), 'A faithful retelling of the Rāmāyaṇa of Vālmīki, with notes for contemporary readers. $_lorem',
-      local: {
-        'hi': 'रामायण',
-        'mr': 'रामायण',
-        'gu': 'રામાયણ',
-        'bn': 'রামায়ণ',
-        'te': 'రామాయణం',
-        'ta': 'ராமாயணம்',
-        'kn': 'ರಾಮಾಯಣ',
-        'ml': 'രാമായണം',
-        'or': 'ରାମାୟଣ'
-      },
-      featured: true,
-      hard: true,
-      aliases: 'ramayan ram valmiki sita'),
-  _Work('glimpses', 'Glimpses of Traditional Indian Life', 'Vedic Culture', 220, 280, 'en hi gu mr',
-      Color(0xFF6B7A2B), 'Customs, etiquette, festivals and values that shaped traditional Indian society. $_lorem',
-      local: {'hi': 'भारतीय जीवन की झलकियाँ', 'gu': 'ભારતીય જીવનની ઝલક', 'mr': 'भारतीय जीवनाच्या झलक'},
-      aliases: 'gotil culture'),
-  _Work('beginners-guide', "A Beginner's Guide to Kṛṣṇa Consciousness", "Beginner's Guide", 120, 160,
-      'en hi gu mr bn te ta kn ml or as pa ne ru es pt', Color(0xFFD9871F),
-      'A friendly, practical introduction to the philosophy and daily practice of Kṛṣṇa consciousness. $_lorem',
-      local: {
-        'hi': 'कृष्णभावनामृत की प्रारंभिक मार्गदर्शिका',
-        'mr': 'कृष्णभावनामृताची प्राथमिक मार्गदर्शिका',
-        'gu': 'કૃષ્ણભાવનામૃતની પ્રારંભિક માર્ગદર્શિકા',
-        'bn': 'কৃষ্ণভাবনামৃতের প্রাথমিক নির্দেশিকা'
-      },
-      featured: true,
-      isNew: true,
-      aliases: 'krishna krsna consciousness beginner intro'),
-  _Work('jaya-prabhupada', 'Jaya Śrīla Prabhupāda!', "Acharya's Glorification", 160, 200, 'en hi gu bn',
-      Color(0xFFC25E0C), 'Memories, anecdotes and tributes to Śrīla A.C. Bhaktivedanta Swami Prabhupāda. $_lorem',
-      local: {'hi': 'जय श्रील प्रभुपाद!', 'gu': 'જય શ્રીલ પ્રભુપાદ!', 'bn': 'জয় শ্রীল প্রভুপাদ!'}, aliases: 'prabhupada acbsp'),
-  _Work('navadvipa', 'Śrī Navadvīpa Dhāma Māhātmya', 'Pilgrimage', 300, 380, 'en hi gu bn',
-      Color(0xFF3B6EA5), 'The glories and sacred geography of Navadvīpa, the birthplace of Śrī Caitanya Mahāprabhu. $_lorem',
-      local: {'hi': 'श्री नवद्वीप धाम माहात्म्य', 'gu': 'શ્રી નવદ્વીપ ધામ માહાત્મ્ય', 'bn': 'শ্রী নবদ্বীপ ধাম মাহাত্ম্য'},
-      hard: true,
-      aliases: 'navadwip mayapur dham pilgrimage'),
-  _Work('gita-youth', 'Bhagavad-gītā for Youth', 'Youth', 150, 190, 'en hi gu mr te ta kn',
-      Color(0xFF7B3FA0), 'The timeless wisdom of the Gītā, presented for students and young professionals. $_lorem',
-      local: {'hi': 'युवाओं के लिए भगवद्गीता', 'gu': 'યુવાનો માટે ભગવદ્ ગીતા', 'mr': 'तरुणांसाठी भगवद्गीता'},
-      isNew: true,
-      aliases: 'geeta gita bhagavad'),
-  _Work('festival-calendar', 'Festivals of the Vaiṣṇava Calendar', 'Festivals', 180, 220, 'en hi gu',
-      Color(0xFFB8860B), 'Significance, stories and observance of Ekādaśī, Janmāṣṭamī, Gaura-pūrṇimā and more. $_lorem',
-      local: {'hi': 'वैष्णव पंचांग के उत्सव', 'gu': 'વૈષ્ણવ પંચાંગના ઉત્સવો'}, aliases: 'ekadasi janmashtami utsav'),
-  _Work('krishna-stories', 'Kṛṣṇa-līlā Stories for Children', 'Youth', 140, 120, 'en hi gu mr ta',
-      Color(0xFF2A8FBD), 'Illustrated, bite-sized stories of Kṛṣṇa’s pastimes for young readers. $_lorem',
-      local: {'hi': 'कृष्ण लीला कथाएँ', 'gu': 'કૃષ્ણલીલા કથાઓ', 'mr': 'कृष्णलीला कथा', 'ta': 'கிருஷ்ண லீலா கதைகள்'},
-      isNew: true,
-      aliases: 'krishna krsna stories kids children lila'),
-  _Work('vrindavana-darsana', 'Vṛndāvana Darśana', 'Pilgrimage', 260, 300, 'en hi gu',
-      Color(0xFF2E7D32), 'A guide to the holy places of Vraja, with pastimes, history and pilgrimage tips. $_lorem',
-      local: {'hi': 'वृन्दावन दर्शन', 'gu': 'વૃંદાવન દર્શન'}, aliases: 'vrindavan braj vraja'),
-  _Work('bhaktivinoda-vaibhava', 'Śrī Bhaktivinoda Ṭhākura Vaibhava', "Acharya's Glorification", 210, 260, 'en hi bn',
-      Color(0xFF8D6E63), 'The glories and contributions of Śrīla Bhaktivinoda Ṭhākura. $_lorem',
-      local: {'hi': 'श्री भक्तिविनोद ठाकुर वैभव', 'bn': 'শ্রী ভক্তিবিনোদ ঠাকুর বৈভব'}, aliases: 'bhaktivinod thakur'),
-  _Work('sadhana-handbook', 'Sādhana: Daily Practice Handbook', "Beginner's Guide", 130, 150, 'en hi gu mr',
-      Color(0xFFE0A100), 'Chanting, worship, diet and daily routines for steady spiritual progress. $_lorem',
-      local: {'hi': 'साधना: दैनिक अभ्यास', 'gu': 'સાધના: દૈનિક અભ્યાસ', 'mr': 'साधना: दैनंदिन सराव'}, aliases: 'sadhna japa chanting'),
-  _Work('dharma-daily', 'Dharma in Daily Life', 'Vedic Culture', 170, 210, 'en hi gu',
-      Color(0xFF455A64), 'Practical applications of Vedic principles at home, work and in society. $_lorem',
-      local: {'hi': 'दैनिक जीवन में धर्म', 'gu': 'દૈનિક જીવનમાં ધર્મ'}, aliases: 'dharm'),
+      aliases: 'ramayan ram valmiki sita lord rama'),
+  _Work('sri-caitanya-mahaprabhu', 'Śrī Caitanya Mahāprabhu', "Acharya's Glorification", 250, 178, 'en gu', Color(0xFFB5541C),
+      'An overview of the life and teachings of Śrī Caitanya Mahāprabhu. First published 2010.',
+      year: 2010, local: {'gu': 'શ્રી ચૈતન્ય મહાપ્રભુ'}, featured: true, aliases: 'chaitanya gaurasundara gauranga'),
+  _Work('sri-vamsidasa-babaji', 'Śrī Vaṁśīdāsa Bābāji', "Acharya's Glorification", 180, 152, 'en', Color(0xFF8D6E63),
+      'The life and glories of Śrī Vaṁśīdāsa Bābāji. Paperback, 2010, 152 pages.',
+      year: 2010, aliases: 'vamsidas babaji vamshidas'),
+  _Work('mothers-masters', 'Mothers & Masters', 'Women & Family', 180, 240, 'en', Color(0xFF9C4A5A),
+      'Presents traditionalist arguments for the direction of the Kṛṣṇa consciousness movement.',
+      aliases: 'mothers and masters women'),
+  _Work('brahmacarya', 'Brahmacarya in Kṛṣṇa Consciousness', 'Youth', 120, 272, 'en hi', Color(0xFF7B3FA0),
+      'A “user’s guide” to brahmacārī life. Paperback, 272 pages. ISBN 978-81-902332-3-1.',
+      year: 0, local: {'hi': 'कृष्णभावनामृत में ब्रह्मचर्य'}, aliases: 'brahmachari brahmacharya celibacy krishna krsna'),
+  _Work('mood-and-mission', 'The Mood and Mission of Śrīla Prabhupāda', "Acharya's Glorification", 220, 280, 'en', Color(0xFFC25E0C),
+      'Covers the life and teachings of Śrīla Prabhupāda from the perspective of his mood and mission.',
+      isNew: true, featured: true, aliases: 'prabhupada acbsp'),
+  _Work('nectar-of-book-distribution', 'The Nectar of Book Distribution', 'Philosophy', 150, 220, 'en', Color(0xFF3B6EA5),
+      'A manual on book distribution, consisting mainly of statements by pioneers, leaders and other experienced devotees in the field of book distribution.',
+      author: 'HDG A.C. Bhaktivedanta Swami Prabhupada', aliases: 'book distribution sankirtana'),
+  _Work('sri-bhaktisiddhanta-vaibhava', 'Śrī Bhaktisiddhānta Vaibhava', "Acharya's Glorification", 2199, 1576, 'en', Color(0xFF455A64),
+      'Hardcover, 2010, 1576 pages. The life and glories of Śrīla Bhaktisiddhānta Sarasvatī Ṭhākura.',
+      year: 2010, hard: true, aliases: 'bhaktisiddhanta saraswati thakura'),
+  _Work('my-memories-of-prabhupada', 'My Memories of Śrīla Prabhupāda', "Acharya's Glorification", 200, 240, 'en hi', Color(0xFFD9871F),
+      'Personal reminiscences of Śrīla Prabhupāda by Bhakti Vikāsa Swami.',
+      local: {'hi': 'श्रील प्रभुपाद के बारे में मेरी स्मृतियाँ'}, aliases: 'prabhupada memories smrti'),
+  _Work('jaya-prabhupada', 'Jaya Śrīla Prabhupāda!', "Acharya's Glorification", 160, 240, 'en hi gu ru bn', Color(0xFFE0A100),
+      'Memories, anecdotes and tributes to Śrīla Prabhupāda. Hindi edition: 2014, 240 pages, paperback. Also available in Gujarati and Russian.',
+      year: 2014, local: {'hi': 'जय श्रील प्रभुपाद', 'gu': 'જય શ્રીલ પ્રભુપાદ!', 'bn': 'জয় শ্রীল প্রভুপাদ!'}, featured: true, aliases: 'prabhupada acbsp'),
+  _Work('message-to-indian-youth', 'भारतीय नवयुवकों को संदेश', 'Youth', 120, 256, 'hi', Color(0xFF2A8FBD),
+      'Hindi, paperback, 2010, 256 pages — a message for India’s youth.',
+      year: 2010, aliases: 'bharatiya navayuvakon sandesh youth message'),
+  _Work('on-pilgrimage-in-holy-india', 'On Pilgrimage in Holy India', 'Pilgrimage', 220, 128, 'en', Color(0xFF2E7D32),
+      'Hardcover, 2009, 128 pages. A pilgrim’s account of holy places in India.',
+      year: 2009, hard: true, aliases: 'pilgrimage tirtha yatra holy india'),
+  _Work('lekha-mala', 'Lekha-mālā: A Garland of Writings', 'Philosophy', 200, 310, 'en', Color(0xFF8A3B12),
+      'Paperback, Bhakti Vikas Trust, 2016. ISBN 978-93-82109-34-1. A collection of essays and articles.',
+      year: 2016, aliases: 'lekhamala articles essays'),
+  _Work('glimpses', 'Glimpses of Traditional Indian Life', 'Vedic Culture', 220, 280, 'en', Color(0xFF6B7A2B),
+      'Customs, etiquette and values of traditional Indian society.', aliases: 'gotil culture'),
+  _Work('beginners-guide', 'A Beginner’s Guide to Kṛṣṇa Consciousness', "Beginner's Guide", 120, 160, 'en bn', Color(0xFFB8860B),
+      'A practical introduction to the philosophy and practice of Kṛṣṇa consciousness.',
+      local: {'bn': 'কৃষ্ণভাবনামৃতের প্রাথমিক নির্দেশিকা'}, featured: true, aliases: 'krishna krsna consciousness beginner intro'),
 ];
 
 int _hash(String s) {
@@ -188,7 +151,7 @@ List<Book> _buildBooks() {
         pages: w.pages + (h % 20),
         prices: prices,
         // A few titles are low / out of stock to demo stock states.
-        stock: h % 11 == 0 ? 0 : (h % 7 == 0 ? 4 : 20 + h % 180),
+        stock: (w.isNew || w.featured || l == 'en') ? 20 + h % 180 : (h % 11 == 0 ? 0 : (h % 7 == 0 ? 4 : 20 + h % 180)),
         rating: 3.9 + (h % 11) / 10,
         ratingCount: 12 + h % 340,
         color: w.color,
@@ -313,24 +276,24 @@ final articles = <Article>[
         'Habits compound. A modest commitment of ten minutes each morning, before the day’s noise begins, is far easier to sustain than an ambitious weekly marathon.',
         'Choose a fixed place and time. Keep your book — or the reader app — within easy reach. Over weeks, the practice becomes natural.',
         'Mark a few passages that speak to you, and revisit them at the end of the week. Bookmarks and highlights in the reader make this effortless.',
-      ], ['beginners-guide', 'sadhana-handbook'], const Color(0xFFD9871F)),
-  Article('a2', 'Ekādaśī Explained: What, Why and How',
-      'A simple guide to observing Ekādaśī, with tips for beginners and families.',
+      ], ['beginners-guide', 'brahmacarya'], const Color(0xFFD9871F)),
+  Article('a2', 'On Brahmacarya: A Practical Introduction',
+      'What brahmacarya means in Kṛṣṇa consciousness and how students can approach it.',
       'BVT Editorial', '02 Oct 2026', '6 min', const [
         'Ekādaśī, the eleventh day of each lunar fortnight, is observed with fasting from grains and increased devotional activity.',
         'Beginners can start by observing a light fast and chanting a few extra rounds. Gradually deepen the practice with guidance from experienced devotees.',
-      ], ['festival-calendar', 'sadhana-handbook'], const Color(0xFFB8860B)),
-  Article('a3', 'A Pilgrim’s Guide to Navadvīpa',
-      'Planning a trip to the birthplace of Śrī Caitanya Mahāprabhu? Start here.',
+      ], ['brahmacarya', 'beginners-guide'], const Color(0xFFB8860B)),
+  Article('a3', 'Planning a Pilgrimage in Holy India',
+      'Tips for preparing a pilgrimage to the holy places of India.',
       'BVT Editorial', '21 Sep 2026', '8 min', const [
         'Navadvīpa-dhāma consists of nine islands, each associated with a different aspect of devotional service.',
         'The best season to visit is October to March. Plan to spend at least three days to experience the main sites with a local guide.',
-      ], ['navadvipa', 'sri-caitanya-mahaprabhu'], const Color(0xFF3B6EA5)),
+      ], ['on-pilgrimage-in-holy-india', 'sri-caitanya-mahaprabhu'], const Color(0xFF3B6EA5)),
   Article('a4', 'Raising Children with Values: Stories That Stay',
       'How stories from the Itihāsa help children develop character and curiosity.',
       'BVT Editorial', '09 Sep 2026', '4 min', const [
         'Stories carry values more gently than lectures. A bedtime story of Prahlāda or Dhruva can leave a lasting impression.',
-      ], ['krishna-stories', 'ramayana'], const Color(0xFF2A8FBD)),
+      ], ['ramayana', 'mothers-masters'], const Color(0xFF2A8FBD)),
 ];
 
 final faqs = <(String, String)>[

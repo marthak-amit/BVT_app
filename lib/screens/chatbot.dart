@@ -77,7 +77,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       final r = recommendedForUser().books.take(3).toList();
       return WaMessage(hi ? 'आपके लिए ये पुस्तकें सुझाई जाती हैं:' : 'Here are three books I think you will like:', books: r.map((b) => b.id).toList());
     }
-    if (has(['catalog', 'language', 'browse', 'भाषा', 'कैटलॉग'])) return WaMessage(hi ? 'हमारे पास 16 भाषाओं में 80+ शीर्षक हैं — हिन्दी, गुजराती, मराठी, बंगाली, तेलुगु, तमिल आदि।' : 'We have 80+ titles in 16 languages — English, Hindi, Gujarati, Marathi, Bengali, Telugu, Tamil, Kannada, Malayalam, Odia and more. Try Browse → Shop by language.');
+    if (has(['catalog', 'language', 'browse', 'भाषा', 'कैटलॉग'])) return WaMessage(hi ? 'हमारे पास कई भाषाओं में पुस्तकें हैं — हिन्दी, गुजराती, मराठी, बंगाली, तेलुगु, तमिल आदि।' : 'We publish books in many languages — English, Hindi, Gujarati, Marathi, Bengali, Telugu, Tamil, Kannada, Malayalam, Odia and more. Try Browse → Shop by language.');
     for (final e in app.kb) {
       final words = e.q.toLowerCase().split(' ');
       if (words.any((w) => w.length > 2 && t.contains(w))) return WaMessage(hi ? 'जानकारी: ${e.a}' : e.a);

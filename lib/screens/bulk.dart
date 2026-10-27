@@ -82,7 +82,7 @@ class _BulkOrderScreenState extends State<BulkOrderScreen> {
         ),
         const SectionHeader('Upload a CSV'),
         OutlinedButton.icon(
-          onPressed: () => setState(() => csv = [('beginners-guide-en', 100), ('gita-youth-hi', 60), ('ramayana-gu', 25), ('krishna-stories-en', 40), ('poster-pancha-tattva', 30)].map((e) => (e.$1, e.$2)).toList()),
+          onPressed: () => setState(() => csv = [('beginners-guide-en', 100), ('brahmacarya-hi', 60), ('ramayana-gu', 25), ('nectar-of-book-distribution-en', 40), ('poster-pancha-tattva', 30)].map((e) => (e.$1, e.$2)).toList()),
           icon: const Icon(Icons.upload_file),
           label: const Text('Upload SKU,Qty file (demo sample)'),
         ),

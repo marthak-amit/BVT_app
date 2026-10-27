@@ -118,7 +118,7 @@ class _Idle extends StatelessWidget {
         ],
         const Text('Popular searches', style: TextStyle(fontWeight: FontWeight.w800)),
         const SizedBox(height: 6),
-        Wrap(spacing: 8, children: [for (final s in ['Bhagavad-gita', 'Krsna stories', 'Ramayana', 'Prabhupada', 'Ekadasi', 'Navadvipa', 'sadhana']) ActionChip(label: Text(s), onPressed: () => onPick(s))]),
+        Wrap(spacing: 8, children: [for (final s in ['Ramayana', 'Prabhupada', 'Krsna', 'Brahmacarya', 'Caitanya', 'Pilgrimage', 'Mothers']) ActionChip(label: Text(s), onPressed: () => onPick(s))]),
         const SizedBox(height: 18),
         Card(
           child: Padding(
@@ -245,7 +245,7 @@ class _NoResults extends StatelessWidget {
     final recs = catalog.where((b) => b.language == app.preferredBookLang && b.featured).toList();
     return ListView(padding: const EdgeInsets.only(bottom: 24), children: [
       EmptyState(Icons.search_off, 'No results for “$query”', 'Check the spelling, try a shorter word, or browse the recommendations below. We have logged this search to help us expand the catalog.'),
-      Wrap(alignment: WrapAlignment.center, spacing: 8, children: [for (final s in ['krishna', 'gita', 'ramayana']) ActionChip(label: Text('Try “$s”'), onPressed: () => onQuery(s))]),
+      Wrap(alignment: WrapAlignment.center, spacing: 8, children: [for (final s in ['krishna', 'prabhupada', 'ramayana']) ActionChip(label: Text('Try “$s”'), onPressed: () => onQuery(s))]),
       const SectionHeader('You may like'),
       Shelf(recs.isEmpty ? recommendedForUser().books : recs, onTap: (b) => openBook(context, b)),
     ]);
